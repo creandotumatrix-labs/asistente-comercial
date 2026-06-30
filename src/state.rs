@@ -31,7 +31,7 @@ pub struct AppState {
 /// a single contact so rapid-fire inbound messages don't race the stored history.
 #[derive(Clone, Default)]
 pub struct ConvLocks {
-    inner: Arc<StdMutex<HashMap<String, Arc<AsyncMutex<()>>>>,
+    inner: Arc<StdMutex<HashMap<String, Arc<AsyncMutex<()>>>>>,
 }
 
 impl ConvLocks {
