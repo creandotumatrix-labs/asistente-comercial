@@ -85,8 +85,15 @@ impl AppConfig {
             },
         };
 
+        // Railway (and most PaaS) inject PORT; prefer it so the healthcheck
+        // reaches the right port. Fall back to BIND_ADDR for local/dev.
+        let bind_addr = match env::var("PORT") {
+            Ok(p) if !p.trim().is_empty() => format!("0.0.0.0:{}", p.trim()),
+            _ => env_or("BIND_ADDR", "0.0.0.0:8080"),
+        };
+
         Ok(Self {
-            bind_addr: env_or("BIND_ADDR", "0.0.0.0:8080"),
+            bind_addr,
             offer_config_path: env_or("OFFER_CONFIG_PATH", "config/offer.json"),
             public_base_url: env_or("PUBLIC_BASE_URL", "http://localhost:8080"),
             database_url: env_req("DATABASE_URL")?,
