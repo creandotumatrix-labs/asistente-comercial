@@ -1,3 +1,4 @@
+pub mod landing;
 pub mod transcript;
 pub mod webhook;
 
@@ -9,6 +10,7 @@ use crate::state::AppState;
 
 pub fn router(state: AppState) -> Router {
     Router::new()
+        .route("/", get(landing::landing))
         .route("/health", get(health))
         .route("/webhook", get(webhook::verify).post(webhook::receive))
         .route("/conversations/:id/transcript", get(transcript::show))
