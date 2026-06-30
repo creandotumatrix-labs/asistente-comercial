@@ -1,5 +1,7 @@
 # ── Builder ──────────────────────────────────────────────────────────────────
-FROM rust:1.82-slim-bookworm AS builder
+# Latest stable 1.x: needed because we don't commit a Cargo.lock, so Cargo
+# resolves deps to latest, some of which require edition 2024 (Rust >= 1.85).
+FROM rust:1-slim-bookworm AS builder
 WORKDIR /app
 
 # Pre-cache dependencies (only re-runs when Cargo manifests change).
