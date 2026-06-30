@@ -1,0 +1,134 @@
+{
+  "branding": {
+    "business_name": "Nexa Automatización",
+    "agent_name": "Vera",
+    "locale": "es-MX",
+    "tone": "cálido, profesional, directo"
+  },
+  "offer": {
+    "summary": "Implementamos asistentes de WhatsApp que atienden, califican y agendan clientes 24/7 para negocios de servicios.",
+    "what_we_sell": "Consultoría e implementación de automatización de atención y ventas por WhatsApp (no vendemos licencias sueltas; es solución llave en mano).",
+    "pricing_policy": "No cotices precios ni alcances específicos; el asesor define la propuesta según el caso en la llamada.",
+    "faq": [
+      {
+        "q": "¿En cuánto tiempo queda funcionando?",
+        "a": "Un piloto suele estar operando en 1 a 2 semanas; el asesor confirma según tu caso."
+      },
+      {
+        "q": "¿Se integra con mi CRM y mi calendario?",
+        "a": "Sí, integramos con los CRMs y calendarios más comunes. Lo revisamos en la llamada."
+      },
+      {
+        "q": "¿Funciona en varios idiomas?",
+        "a": "Sí, el asistente puede atender en español e inglés, entre otros."
+      }
+    ]
+  },
+  "qualification": {
+    "slots": [
+      {
+        "key": "need",
+        "question": "¿En qué área necesitas apoyo? (p. ej. atención a clientes, ventas, agendar citas)",
+        "required": true,
+        "type": "text"
+      },
+      {
+        "key": "context",
+        "question": "¿Para qué tipo de empresa o giro es?",
+        "required": true,
+        "type": "text"
+      },
+      {
+        "key": "size",
+        "question": "¿Cuántas ubicaciones, sucursales o agentes manejan?",
+        "required": true,
+        "type": "number",
+        "hint": "Proxy de tamaño/presupuesto"
+      },
+      {
+        "key": "timeline",
+        "question": "¿Para cuándo te gustaría tener algo funcionando?",
+        "required": true,
+        "type": "enum",
+        "values": ["this_month", "this_quarter", "later", "unknown"],
+        "hint": "this_month = este mes; this_quarter = este trimestre; later = más adelante"
+      },
+      {
+        "key": "budget",
+        "question": "¿Ya tienen un presupuesto asignado para esto?",
+        "required": false,
+        "type": "text"
+      }
+    ],
+    "rubric": {
+      "weights": { "size": 0.3, "timeline": 0.4, "need_fit": 0.3 },
+      "timeline_scores": {
+        "this_month": 1.0,
+        "this_quarter": 0.6,
+        "later": 0.2,
+        "unknown": 0.3
+      },
+      "size_tiers": [
+        { "min": 5, "score": 1.0, "label": "5+ (alto)" },
+        { "min": 2, "score": 0.6, "label": "2-4 (medio)" },
+        { "min": 0, "score": 0.3, "label": "0-1 (bajo)" }
+      ],
+      "need_keywords": {
+        "automatizar": 1.0,
+        "automatización": 1.0,
+        "atención a clientes": 1.0,
+        "atencion a clientes": 1.0,
+        "soporte": 0.9,
+        "ventas": 0.9,
+        "agendar": 0.9,
+        "citas": 0.9,
+        "leads": 0.9,
+        "cotizaciones": 0.8,
+        "whatsapp": 0.7
+      },
+      "thresholds": { "hot": 0.7, "warm": 0.4 },
+      "default_factor_score": 0.3
+    },
+    "disqualifiers": [
+      {
+        "slot": "context",
+        "contains_any": ["tarea", "escuela", "estudiante", "proyecto escolar", "investigación escolar"],
+        "reason": "Consulta escolar / no es una empresa"
+      },
+      {
+        "slot": "need",
+        "contains_any": ["empleo", "trabajo", "vacante", "cv", "curriculum"],
+        "reason": "Búsqueda de empleo, no es un prospecto de venta"
+      },
+      {
+        "slot": "timeline",
+        "equals": "later",
+        "soft": true,
+        "reason": "Plazo lejano (sin urgencia)"
+      }
+    ]
+  },
+  "calendar": {
+    "calendar_id": "primary",
+    "timezone": "America/Mexico_City",
+    "working_hours": { "start": "10:00", "end": "18:00" },
+    "slot_minutes": 20,
+    "days_ahead": 7,
+    "days": [1, 2, 3, 4, 5],
+    "min_lead_minutes": 120,
+    "max_slots": 6
+  },
+  "resources": {
+    "default": "https://nexa.example.com/guia-automatizacion-whatsapp",
+    "atención a clientes": "https://nexa.example.com/casos/atencion-clientes",
+    "ventas": "https://nexa.example.com/casos/ventas-whatsapp"
+  },
+  "deflection": {
+    "message": "Por ahora te dejo una guía con casos y resultados. Cuando quieras avanzar, con gusto te conecto con un asesor. 🙌"
+  },
+  "handoff": {
+    "channel": "whatsapp",
+    "rep_wa_id": "5215555555555",
+    "webhook_url": null
+  }
+}
