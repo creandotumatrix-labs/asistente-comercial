@@ -10,64 +10,22 @@
     "what_we_sell": "Consultoría e implementación de automatización de atención y ventas por WhatsApp (no vendemos licencias sueltas; es solución llave en mano).",
     "pricing_policy": "No cotices precios ni alcances específicos; el asesor define la propuesta según el caso en la llamada.",
     "faq": [
-      {
-        "q": "¿En cuánto tiempo queda funcionando?",
-        "a": "Un piloto suele estar operando en 1 a 2 semanas; el asesor confirma según tu caso."
-      },
-      {
-        "q": "¿Se integra con mi CRM y mi calendario?",
-        "a": "Sí, integramos con los CRMs y calendarios más comunes. Lo revisamos en la llamada."
-      },
-      {
-        "q": "¿Funciona en varios idiomas?",
-        "a": "Sí, el asistente puede atender en español e inglés, entre otros."
-      }
+      { "q": "¿En cuánto tiempo queda funcionando?", "a": "Un piloto suele estar operando en 1 a 2 semanas; el asesor confirma según tu caso." },
+      { "q": "¿Se integra con mi CRM y mi calendario?", "a": "Sí, integramos con los CRMs y calendarios más comunes. Lo revisamos en la llamada." },
+      { "q": "¿Funciona en varios idiomas?", "a": "Sí, el asistente puede atender en español e inglés, entre otros." }
     ]
   },
   "qualification": {
     "slots": [
-      {
-        "key": "need",
-        "question": "¿En qué área necesitas apoyo? (p. ej. atención a clientes, ventas, agendar citas)",
-        "required": true,
-        "type": "text"
-      },
-      {
-        "key": "context",
-        "question": "¿Para qué tipo de empresa o giro es?",
-        "required": true,
-        "type": "text"
-      },
-      {
-        "key": "size",
-        "question": "¿Cuántas ubicaciones, sucursales o agentes manejan?",
-        "required": true,
-        "type": "number",
-        "hint": "Proxy de tamaño/presupuesto"
-      },
-      {
-        "key": "timeline",
-        "question": "¿Para cuándo te gustaría tener algo funcionando?",
-        "required": true,
-        "type": "enum",
-        "values": ["this_month", "this_quarter", "later", "unknown"],
-        "hint": "this_month = este mes; this_quarter = este trimestre; later = más adelante"
-      },
-      {
-        "key": "budget",
-        "question": "¿Ya tienen un presupuesto asignado para esto?",
-        "required": false,
-        "type": "text"
-      }
+      { "key": "need", "question": "¿En qué área necesitas apoyo? (p. ej. atención a clientes, ventas, agendar citas)", "required": true, "type": "text" },
+      { "key": "context", "question": "¿Para qué tipo de empresa o giro es?", "required": true, "type": "text" },
+      { "key": "size", "question": "¿Cuántas ubicaciones, sucursales o agentes manejan?", "required": true, "type": "number", "hint": "Proxy de tamaño/presupuesto" },
+      { "key": "timeline", "question": "¿Para cuándo te gustaría tener algo funcionando?", "required": true, "type": "enum", "values": ["this_month", "this_quarter", "later", "unknown"], "hint": "this_month = este mes; this_quarter = este trimestre; later = más adelante" },
+      { "key": "budget", "question": "¿Ya tienen un presupuesto asignado para esto?", "required": false, "type": "text" }
     ],
     "rubric": {
       "weights": { "size": 0.3, "timeline": 0.4, "need_fit": 0.3 },
-      "timeline_scores": {
-        "this_month": 1.0,
-        "this_quarter": 0.6,
-        "later": 0.2,
-        "unknown": 0.3
-      },
+      "timeline_scores": { "this_month": 1.0, "this_quarter": 0.6, "later": 0.2, "unknown": 0.3 },
       "size_tiers": [
         { "min": 5, "score": 1.0, "label": "5+ (alto)" },
         { "min": 2, "score": 0.6, "label": "2-4 (medio)" },
@@ -90,26 +48,13 @@
       "default_factor_score": 0.3
     },
     "disqualifiers": [
-      {
-        "slot": "context",
-        "contains_any": ["tarea", "escuela", "estudiante", "proyecto escolar", "investigación escolar"],
-        "reason": "Consulta escolar / no es una empresa"
-      },
-      {
-        "slot": "need",
-        "contains_any": ["empleo", "trabajo", "vacante", "cv", "curriculum"],
-        "reason": "Búsqueda de empleo, no es un prospecto de venta"
-      },
-      {
-        "slot": "timeline",
-        "equals": "later",
-        "soft": true,
-        "reason": "Plazo lejano (sin urgencia)"
-      }
+      { "slot": "context", "contains_any": ["tarea", "escuela", "estudiante", "proyecto escolar", "investigación escolar"], "reason": "Consulta escolar / no es una empresa" },
+      { "slot": "need", "contains_any": ["empleo", "trabajo", "vacante", "cv", "curriculum"], "reason": "Búsqueda de empleo, no es un prospecto de venta" },
+      { "slot": "timeline", "equals": "later", "soft": true, "reason": "Plazo lejano (sin urgencia)" }
     ]
   },
   "calendar": {
-    "calendar_id": "primary",
+    "calendar_id": "marcus@creandotumatrix.com",
     "timezone": "America/Mexico_City",
     "working_hours": { "start": "10:00", "end": "18:00" },
     "slot_minutes": 20,
@@ -128,7 +73,7 @@
   },
   "handoff": {
     "channel": "whatsapp",
-    "rep_wa_id": "5215555555555",
+    "rep_wa_id": "523223500097",
     "webhook_url": null
   }
 }
