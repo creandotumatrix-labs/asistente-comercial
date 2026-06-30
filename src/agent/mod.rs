@@ -52,7 +52,17 @@ pub async fn handle_inbound(state: AppState, msg: InboundText) -> Result<()> {
     let mut completed = false;
 
     for _ in 0..MAX_STEPS {
-        let resp = state.llm.create(&system, &history, &tools).await?;
+        let resp = match state.llm.create(&system, &history, &tools).await {
+            Ok(r) => r,
+            Err(e) => {
+                tracing::error!("anthropic call failed: {e}");
+                reply =
+                    "Disculpa, tuve un problema técnico momentáneo. Un asesor te contactará. 🙏"
+                        .to_string();
+                completed = true;
+                break;
+            }
+        };
         history.push(resp.assistant_message.clone());
 
         if resp.tool_uses.is_empty() {
@@ -96,12 +106,16 @@ pub async fn handle_inbound(state: AppState, msg: InboundText) -> Result<()> {
         }));
     }
 
-    state.whatsapp.send_text(&msg.from, &reply).await?;
-
+    // Persist the turn BEFORE delivery, so an outbound failure (e.g. WhatsApp
+    // creds not yet configured) never loses the conversation state.
     let final_history = Value::Array(history);
     state
         .store
         .save_conversation(conv.id, &final_history, &ctx.status, ctx.score_str())
         .await?;
+
+    if let Err(e) = state.whatsapp.send_text(&msg.from, &reply).await {
+        tracing::error!("whatsapp send failed (turn persisted): {e}");
+    }
     Ok(())
 }
