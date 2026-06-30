@@ -1,0 +1,31 @@
+# Fly.io deploy. Postgres: `fly postgres create` then `fly postgres attach`
+# (sets DATABASE_URL). Secrets: `fly secrets set ANTHROPIC_API_KEY=... WHATSAPP_ACCESS_TOKEN=... ...`
+app = "asistente-comercial"
+primary_region = "qro"   # Querétaro — low latency for MX traffic
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[http_service.checks]]
+  method = "GET"
+  path = "/health"
+  interval = "15s"
+  timeout = "2s"
+  grace_period = "10s"
+
+[env]
+  BIND_ADDR = "0.0.0.0:8080"
+  RUN_MIGRATIONS = "true"
+  OFFER_CONFIG_PATH = "config/offer.json"
+  # Set the rest via `fly secrets set`:
+  #   ANTHROPIC_API_KEY, ANTHROPIC_MODEL
+  #   WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_ACCESS_TOKEN, WHATSAPP_VERIFY_TOKEN
+  #   GOOGLE_SERVICE_ACCOUNT_JSON  (inline the whole JSON as one secret)
+  #   HUBSPOT_TOKEN, PUBLIC_BASE_URL (https://<app>.fly.dev)

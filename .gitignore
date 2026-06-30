@@ -1,0 +1,10 @@
+/target
+**/*.rs.bk
+.env
+.env.*
+!.env.example
+*.log
+config/offer.json
+secrets/
+*.pem
+google-service-account*.json

@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: asistente
+      POSTGRES_PASSWORD: asistente
+      POSTGRES_DB: asistente
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U asistente"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    # Secrets (Anthropic / WhatsApp / HubSpot keys) come from .env
+    env_file: .env
+    # These override .env so the container talks to the compose Postgres and
+    # mounted config/secret regardless of what .env says.
+    environment:
+      DATABASE_URL: postgres://asistente:asistente@db:5432/asistente
+      OFFER_CONFIG_PATH: /app/config/offer.json
+      GOOGLE_SERVICE_ACCOUNT_PATH: /app/secrets/google-service-account.json
+      RUN_MIGRATIONS: "true"
+    volumes:
+      # Your live white-label config (copy config/offer.example.json -> offer.json)
+      - ./config/offer.json:/app/config/offer.json:ro
+      # Google service-account key
+      - ./secrets:/app/secrets:ro
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
