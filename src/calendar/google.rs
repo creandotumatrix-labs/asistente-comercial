@@ -123,6 +123,41 @@ impl GoogleCalendar {
         });
         Ok(access)
     }
+
+    async fn insert_event(
+        &self,
+        token: &str,
+        url: &str,
+        body: &Value,
+    ) -> Result<(reqwest::StatusCode, Value)> {
+        let resp = self.http.post(url).bearer_auth(token).json(body).send().await?;
+        let status = resp.status();
+        let v: Value = resp.json().await.unwrap_or(Value::Null);
+        Ok((status, v))
+    }
+
+    fn to_booked(
+        cfg: &CalendarCfg,
+        start: DateTime<Utc>,
+        end: DateTime<Utc>,
+        v: &Value,
+    ) -> BookedMeeting {
+        let event_id = v.get("id").and_then(|x| x.as_str()).unwrap_or_default().to_string();
+        let html_link = v.get("htmlLink").and_then(|x| x.as_str()).map(str::to_string);
+        let meet_link = v
+            .get("hangoutLink")
+            .and_then(|x| x.as_str())
+            .map(str::to_string)
+            .or_else(|| extract_video_entry_point(v));
+        BookedMeeting {
+            event_id,
+            start,
+            end,
+            html_link,
+            meet_link,
+            label: label_for(cfg, start),
+        }
+    }
 }
 
 #[async_trait]
@@ -180,11 +215,9 @@ impl Calendar for GoogleCalendar {
     async fn book_meeting(&self, cfg: &CalendarCfg, req: BookRequest) -> Result<BookedMeeting> {
         let token = self.access_token().await?;
         let end = req.start + Duration::minutes(cfg.slot_minutes);
-        let url = format!(
-            "https://www.googleapis.com/calendar/v3/calendars/{}/events?conferenceDataVersion=1&sendUpdates=all",
-            encode_path(&cfg.calendar_id)
-        );
 
+        // Preferred path: real Google Meet link + attendee invite. Works when the
+        // target calendar is a Workspace calendar with domain-wide delegation.
         let mut event = json!({
             "summary": req.summary,
             "description": req.description,
@@ -200,44 +233,61 @@ impl Calendar for GoogleCalendar {
         if let Some(email) = &req.attendee_email {
             event["attendees"] = json!([{ "email": email, "displayName": req.attendee_name }]);
         }
+        let url = format!(
+            "https://www.googleapis.com/calendar/v3/calendars/{}/events?conferenceDataVersion=1&sendUpdates=all",
+            encode_path(&cfg.calendar_id)
+        );
 
-        let resp = self
-            .http
-            .post(&url)
-            .bearer_auth(&token)
-            .json(&event)
-            .send()
-            .await?;
-        let status = resp.status();
-        let v: Value = resp.json().await.unwrap_or(Value::Null);
-        if !status.is_success() {
-            return Err(anyhow!("event insert failed ({status}): {v}"));
+        let (status, v) = self.insert_event(&token, &url, &event).await?;
+        if status.is_success() {
+            return Ok(Self::to_booked(cfg, req.start, end, &v));
         }
 
-        let event_id = v
-            .get("id")
-            .and_then(|x| x.as_str())
-            .unwrap_or_default()
-            .to_string();
-        let html_link = v
-            .get("htmlLink")
-            .and_then(|x| x.as_str())
-            .map(str::to_string);
-        let meet_link = v
-            .get("hangoutLink")
-            .and_then(|x| x.as_str())
-            .map(str::to_string)
-            .or_else(|| extract_video_entry_point(&v));
+        // A plain service account (no domain-wide delegation) can neither invite
+        // attendees nor create Meet conferences on a shared/personal calendar:
+        // Google returns 403 forbiddenForServiceAccounts. Fall back to a plain
+        // event so the booking still lands and blocks the rep's time; the
+        // prospect's contact goes in the body and they get the WhatsApp
+        // confirmation instead of a Google invite email.
+        if status.as_u16() == 403 {
+            tracing::warn!("calendar insert 403 (service account without DWD); retrying plain event: {v}");
+            let plain = json!({
+                "summary": req.summary,
+                "description": with_contact(&req),
+                "start": { "dateTime": req.start.to_rfc3339(), "timeZone": cfg.timezone },
+                "end":   { "dateTime": end.to_rfc3339(), "timeZone": cfg.timezone }
+            });
+            let plain_url = format!(
+                "https://www.googleapis.com/calendar/v3/calendars/{}/events?sendUpdates=none",
+                encode_path(&cfg.calendar_id)
+            );
+            let (status2, v2) = self.insert_event(&token, &plain_url, &plain).await?;
+            if status2.is_success() {
+                return Ok(Self::to_booked(cfg, req.start, end, &v2));
+            }
+            return Err(anyhow!("event insert failed (plain retry {status2}): {v2}"));
+        }
 
-        Ok(BookedMeeting {
-            event_id,
-            start: req.start,
-            end,
-            html_link,
-            meet_link,
-            label: label_for(cfg, req.start),
-        })
+        Err(anyhow!("event insert failed ({status}): {v}"))
     }
+}
+
+/// Append the prospect's name/email to the event description (used on the
+/// plain-event fallback path, where they can't be added as a real attendee).
+fn with_contact(req: &BookRequest) -> String {
+    let mut s = req.description.clone();
+    if req.attendee_name.is_some() || req.attendee_email.is_some() {
+        s.push_str("\n\nProspecto: ");
+        if let Some(n) = &req.attendee_name {
+            s.push_str(n);
+        }
+        if let Some(e) = &req.attendee_email {
+            s.push_str(" <");
+            s.push_str(e);
+            s.push('>');
+        }
+    }
+    s
 }
 
 fn extract_video_entry_point(v: &Value) -> Option<String> {
