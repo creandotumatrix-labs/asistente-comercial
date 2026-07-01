@@ -77,16 +77,17 @@ const TEMPLATE: &str = r##"<!doctype html>
   .btn.ghost{background:rgba(255,255,255,.04); border-color:var(--line); color:var(--txt)}
   .btn.ghost:hover{border-color:var(--accent); color:#fff}
   .btn.sm{padding:9px 15px; font-size:13px}
-  .hero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; padding:70px 0 40px}
+  .hero{display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; padding:52px 0 44px}
+  .herotop{max-width:800px; margin:0 auto}
   .eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; color:var(--emerald);
     background:rgba(37,211,102,.08); border:1px solid rgba(37,211,102,.28); padding:6px 13px; border-radius:999px}
   .pdot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(37,211,102,.6);animation:pulse 1.8s infinite}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 10px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
   h1{font-size:clamp(30px,4.4vw,52px); line-height:1.06; letter-spacing:-1.2px; margin:18px 0 16px; font-weight:850}
   h1 .g{background:linear-gradient(120deg,var(--emerald),var(--green) 55%,var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{font-size:17.5px; color:var(--muted); max-width:33em; margin:0 0 26px}
+  .lead{font-size:17.5px; color:var(--muted); max-width:40em; margin:0 auto 16px}
   .cta{display:flex; gap:12px; flex-wrap:wrap}
-  .trust{display:flex; gap:18px; flex-wrap:wrap; margin-top:24px; color:var(--dim); font-size:13px}
+  .trust{display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin-top:14px; color:var(--dim); font-size:13px}
   .trust span{display:inline-flex; align-items:center; gap:7px}
   .trust b{color:var(--txt); font-weight:700}
   .tick{color:var(--emerald)}
@@ -188,18 +189,10 @@ const TEMPLATE: &str = r##"<!doctype html>
 </div></nav>
 
 <header class="wrap hero" id="demo">
-  <div>
+  <div class="herotop">
     <span class="eyebrow"><span class="pdot"></span> <span data-es="Agente en vivo · pruébalo ahora" data-en="Live agent · try it now">Agente en vivo · pruébalo ahora</span></span>
     <h1><span data-es="Convierte cada WhatsApp en una" data-en="Turn every WhatsApp into a">Convierte cada WhatsApp en una</span> <span class="g" data-es="cita agendada" data-en="booked meeting">cita agendada</span>.</h1>
-    <p class="lead" data-es="__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés. Escríbele aquí a la derecha: es el agente real, en vivo." data-en="__AGENT__ greets, qualifies and books your prospects automatically — 24/7, in Spanish and English. Chat with it on the right: it's the real agent, live.">__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés. Escríbele aquí a la derecha: es el agente real, en vivo.</p>
-    <div class="cta">
-      <a class="btn wa" href="https://wa.me/523223500097?text=Hola,%20quiero%20ver%20el%20asistente%20en%20acci%C3%B3n" target="_blank" rel="noopener">
-        <span>▶</span> <span data-es="Probarlo en WhatsApp" data-en="Try it on WhatsApp">Probarlo en WhatsApp</span>
-      </a>
-      <a class="btn ghost" href="mailto:marcus@creandotumatrix.com?subject=Demo%20__AGENT__">
-        <span data-es="Hablar con ventas" data-en="Talk to sales">Hablar con ventas</span>
-      </a>
-    </div>
+    <p class="lead" data-es="__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés. Escríbele aquí abajo: es el agente real, en vivo." data-en="__AGENT__ greets, qualifies and books your prospects automatically — 24/7, in Spanish and English. Chat with it below: it's the real agent, live.">__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés. Escríbele aquí abajo: es el agente real, en vivo.</p>
     <div class="trust">
       <span><span class="tick">✓</span> <b>24/7</b> <span data-es="sin descanso" data-en="always on">sin descanso</span></span>
       <span><span class="tick">✓</span> <b>ES / EN</b></span>
