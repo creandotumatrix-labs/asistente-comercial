@@ -135,6 +135,7 @@ const TEMPLATE: &str = r##"<!doctype html>
   h2{font-size:clamp(24px,3vw,36px); text-align:center; margin:10px 0 8px; letter-spacing:-.6px; font-weight:820}
   .sectlead{text-align:center; color:var(--muted); max-width:34em; margin:0 auto 40px}
   .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+  .capgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px}
   .stepc{background:linear-gradient(180deg,rgba(255,255,255,.03),transparent); border:1px solid var(--line); border-radius:18px; padding:24px 18px; position:relative; overflow:hidden}
   .stepc::before{content:""; position:absolute; inset:0; background:radial-gradient(300px 120px at 50% -20%, rgba(37,211,102,.16), transparent 70%); opacity:0; transition:.4s}
   .stepc:hover::before{opacity:1}
@@ -238,6 +239,25 @@ const TEMPLATE: &str = r##"<!doctype html>
       <div class="stepc reveal"><span class="n">02</span><span class="ic">🎯</span><h3 data-es="Califica" data-en="Qualify">Califica</h3><p data-es="Hace las preguntas correctas y puntúa cada lead: caliente, tibio o frío." data-en="Asks the right questions and scores each lead: hot, warm or cold.">Hace las preguntas correctas y puntúa cada lead: caliente, tibio o frío.</p></div>
       <div class="stepc reveal"><span class="n">03</span><span class="ic">📅</span><h3 data-es="Agenda" data-en="Book">Agenda</h3><p data-es="Ofrece horarios reales de tu calendario y reserva la cita al momento." data-en="Offers real slots from your calendar and books the meeting on the spot.">Ofrece horarios reales de tu calendario y reserva la cita al momento.</p></div>
       <div class="stepc reveal"><span class="n">04</span><span class="ic">📨</span><h3 data-es="Entrega" data-en="Hand off">Entrega</h3><p data-es="Registra el lead en tu CRM y avisa a tu asesor con todo el contexto." data-en="Logs the lead in your CRM and alerts your rep with full context.">Registra el lead en tu CRM y avisa a tu asesor con todo el contexto.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="capacidades">
+  <div class="wrap">
+    <div class="kicker" data-es="Todo lo que hace" data-en="Everything it does">Todo lo que hace</div>
+    <h2 data-es="Una conversación, todo el embudo" data-en="One conversation, the whole funnel">Una conversación, todo el embudo</h2>
+    <p class="sectlead" data-es="Agendar la cita es solo un paso. Esto es todo lo que el agente hace, solo, en cada chat." data-en="Booking is just one step — here's everything the agent does, on its own, in every chat.">Agendar la cita es solo un paso. Esto es todo lo que el agente hace, solo, en cada chat.</p>
+    <div class="capgrid">
+      <div class="stepc reveal"><span class="ic">⚡</span><h3 data-es="Respuesta 24/7" data-en="24/7 replies">Respuesta 24/7</h3><p data-es="Ningún lead espera; ninguno se pierde por responder tarde." data-en="No lead waits; none lost to a slow reply.">Ningún lead espera; ninguno se pierde por responder tarde.</p></div>
+      <div class="stepc reveal"><span class="ic">💬</span><h3 data-es="Conversa, no da menús" data-en="Talks, not menus">Conversa, no da menús</h3><p data-es="Razona en vivo con Claude, una pregunta a la vez, en español o inglés." data-en="Reasons live with Claude, one question at a time, in Spanish or English.">Razona en vivo con Claude, una pregunta a la vez, en español o inglés.</p></div>
+      <div class="stepc reveal"><span class="ic">🎯</span><h3 data-es="Califica y puntúa" data-en="Qualifies and scores">Califica y puntúa</h3><p data-es="Extrae necesidad, urgencia y tamaño; puntúa hot / warm / cold con una rúbrica determinista." data-en="Extracts need, urgency and size; scores hot / warm / cold on a deterministic rubric.">Extrae necesidad, urgencia y tamaño; puntúa hot / warm / cold con una rúbrica determinista.</p></div>
+      <div class="stepc reveal"><span class="ic">🛡️</span><h3 data-es="Filtra lo que no aplica" data-en="Filters out bad-fit">Filtra lo que no aplica</h3><p data-es="Detecta consultas fuera de lugar (tareas, empleo) y se despide con amabilidad." data-en="Spots off-topic queries (homework, job seekers) and bows out kindly.">Detecta consultas fuera de lugar (tareas, empleo) y se despide con amabilidad.</p></div>
+      <div class="stepc reveal"><span class="ic">📅</span><h3 data-es="Lee tu agenda y reserva" data-en="Reads your calendar and books">Lee tu agenda y reserva</h3><p data-es="Ofrece solo horarios realmente libres y crea la cita real en tu Google Calendar." data-en="Offers only genuinely open slots and creates the real event on your Google Calendar.">Ofrece solo horarios realmente libres y crea la cita real en tu Google Calendar.</p></div>
+      <div class="stepc reveal"><span class="ic">🗂️</span><h3 data-es="Registra el trato en tu CRM" data-en="Logs the deal in your CRM">Registra el trato en tu CRM</h3><p data-es="Crea contacto y trato en HubSpot con puntaje, razones y datos calificados." data-en="Creates a HubSpot contact and deal with score, reasons and qualified fields.">Crea contacto y trato en HubSpot con puntaje, razones y datos calificados.</p></div>
+      <div class="stepc reveal"><span class="ic">📨</span><h3 data-es="Entrega al asesor" data-en="Hands off to your rep">Entrega al asesor</h3><p data-es="Avisa a tu equipo con resumen, puntaje, contacto y enlace a la transcripción." data-en="Notifies your team with summary, score, contact and a transcript link.">Avisa a tu equipo con resumen, puntaje, contacto y enlace a la transcripción.</p></div>
+      <div class="stepc reveal"><span class="ic">🧊</span><h3 data-es="Recupera leads fríos" data-en="Recovers cold leads">Recupera leads fríos</h3><p data-es="En vez de agendar, comparte un recurso útil y protege el tiempo de tu asesor." data-en="Instead of booking, shares a helpful resource and protects your rep's time.">En vez de agendar, comparte un recurso útil y protege el tiempo de tu asesor.</p></div>
+      <div class="stepc reveal"><span class="ic">🧠</span><h3 data-es="Recuerda todo, sin improvisar precios" data-en="Remembers all, never guesses price">Recuerda todo, sin improvisar precios</h3><p data-es="Guarda cada mensaje, lead y cita; responde dudas y deja el precio para la llamada." data-en="Keeps every message, lead and booking; answers FAQs and leaves pricing to the call.">Guarda cada mensaje, lead y cita; responde dudas y deja el precio para la llamada.</p></div>
     </div>
   </div>
 </section>
