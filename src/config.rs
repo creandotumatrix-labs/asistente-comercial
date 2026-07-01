@@ -95,7 +95,10 @@ impl AppConfig {
         Ok(Self {
             bind_addr,
             offer_config_path: env_or("OFFER_CONFIG_PATH", "config/offer.json"),
-            public_base_url: env_or("PUBLIC_BASE_URL", "http://localhost:8080"),
+            public_base_url: env_or(
+                "PUBLIC_BASE_URL",
+                "https://asistente-comercial-production.up.railway.app",
+            ),
             database_url: env_req("DATABASE_URL")?,
             run_migrations: env_or("RUN_MIGRATIONS", "true").parse().unwrap_or(true),
             anthropic: AnthropicConfig {
