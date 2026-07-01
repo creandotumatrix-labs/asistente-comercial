@@ -182,8 +182,8 @@ const TEMPLATE: &str = r##"<!doctype html>
       <button type="button" class="lang-btn" data-lang="es">ES</button>
       <button type="button" class="lang-btn" data-lang="en">EN</button>
     </span>
-    <a class="btn wa sm" href="https://wa.me/523223500097?text=Hola,%20quiero%20una%20demo%20del%20asistente" target="_blank" rel="noopener">
-      <span data-es="Agendar demo" data-en="Book a demo">Agendar demo</span>
+    <a class="btn wa sm" href="https://wa.me/523223500097?text=Hola,%20quiero%20agendar%20una%20llamada" target="_blank" rel="noopener">
+      <span data-es="Agendar llamada" data-en="Book a Call">Agendar llamada</span>
     </a>
   </div>
 </div></nav>
