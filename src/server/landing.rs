@@ -1,8 +1,8 @@
 //! Client-facing landing page served at `/`. A polished, bilingual (ES/EN)
-//! showcase — animated live WhatsApp demo, "how it works", and CTAs — designed
-//! to impress prospects rather than expose internals. Also doubles as the HTTP
-//! healthcheck target. Branding (`__AGENT__`, `__BUSINESS__`, `__SUMMARY__`) is
-//! injected live from the loaded `offer.json`.
+//! showcase whose hero is a **live** chat wired to `POST /api/chat` — the same
+//! agent brain as WhatsApp (real Claude, scoring, Google Calendar, HubSpot).
+//! Branding (`__AGENT__`, `__BUSINESS__`, `__SUMMARY__`) is injected live from
+//! the loaded `offer.json`.
 
 use axum::extract::State;
 use axum::response::Html;
@@ -91,7 +91,10 @@ const TEMPLATE: &str = r##"<!doctype html>
   .trust b{color:var(--txt); font-weight:700}
   .tick{color:var(--emerald)}
   .stage{position:relative; display:flex; justify-content:center}
-  .phone{position:relative; width:310px; height:610px; border-radius:42px; padding:13px;
+  .livetag{position:absolute; top:-14px; left:50%; transform:translateX(-50%); z-index:4; font-size:11px; font-weight:800; letter-spacing:.4px;
+    color:#04120a; background:linear-gradient(135deg,var(--green),var(--emerald)); padding:5px 12px; border-radius:999px; box-shadow:var(--glow); display:inline-flex; align-items:center; gap:6px}
+  .livetag .pdot{background:#04120a}
+  .phone{position:relative; width:320px; height:640px; border-radius:42px; padding:13px;
     background:linear-gradient(160deg,#1b2540,#0a0f1d); border:1px solid #26375c;
     box-shadow:0 40px 90px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06); z-index:2}
   .screen{height:100%; border-radius:31px; overflow:hidden; background:#0b141a; display:flex; flex-direction:column}
@@ -99,10 +102,11 @@ const TEMPLATE: &str = r##"<!doctype html>
   .wapic{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--emerald),var(--accent)); display:grid; place-items:center; font-weight:800; color:#04120a; font-size:16px}
   .waname{font-weight:700; font-size:14.5px; line-height:1.2}
   .wastat{font-size:11px; color:#bff0d0; display:flex; align-items:center; gap:5px}
-  .chat{flex:1; padding:14px 12px; overflow:hidden; display:flex; flex-direction:column; gap:9px;
+  .chat{flex:1; padding:14px 12px; overflow-y:auto; display:flex; flex-direction:column; gap:9px;
     background:linear-gradient(180deg,#0b141a,#0d171e);
     background-image:radial-gradient(rgba(255,255,255,.02) 1px, transparent 1px); background-size:16px 16px}
-  .bub{max-width:80%; padding:8px 11px; border-radius:13px; font-size:13.2px; line-height:1.42; opacity:0; transform:translateY(8px); animation:rise .35s forwards; box-shadow:0 1px 2px rgba(0,0,0,.3); position:relative}
+  .chat::-webkit-scrollbar{width:5px} .chat::-webkit-scrollbar-thumb{background:#22323c; border-radius:9px}
+  .bub{max-width:82%; padding:8px 11px; border-radius:13px; font-size:13.2px; line-height:1.42; opacity:0; transform:translateY(8px); animation:rise .3s forwards; box-shadow:0 1px 2px rgba(0,0,0,.3); position:relative; white-space:pre-wrap; word-wrap:break-word}
   @keyframes rise{to{opacity:1; transform:none}}
   .bub.in{align-self:flex-start; background:#1f2c33; color:#e9f3ee; border-top-left-radius:4px}
   .bub.out{align-self:flex-end; background:#075e54; color:#eafff2; border-top-right-radius:4px}
@@ -111,18 +115,20 @@ const TEMPLATE: &str = r##"<!doctype html>
   .typing i{width:6px;height:6px;border-radius:50%;background:#7d93a8; animation:blink 1.2s infinite}
   .typing i:nth-child(2){animation-delay:.2s} .typing i:nth-child(3){animation-delay:.4s}
   @keyframes blink{0%,60%,100%{opacity:.3; transform:translateY(0)}30%{opacity:1; transform:translateY(-3px)}}
-  .slots{display:flex; gap:6px; flex-wrap:wrap; align-self:flex-start; max-width:82%}
-  .slot{font-size:11.5px; font-weight:700; color:#0b141a; background:#cdeede; border:1px solid #a9dcc9; padding:6px 9px; border-radius:9px}
-  .slot.pick{background:linear-gradient(135deg,var(--green),var(--emerald)); color:#04120a; box-shadow:var(--glow)}
+  .wainput{display:flex; gap:8px; padding:10px; background:#0b141a; border-top:1px solid #12202a}
+  .wainput input{flex:1; background:#1f2c33; border:1px solid #2a3b44; border-radius:20px; color:var(--txt); padding:9px 14px; font-size:13px; outline:none}
+  .wainput input:focus{border-color:var(--emerald)}
+  .wainput button{width:38px;height:38px;flex:0 0 38px;border-radius:50%; border:0; background:linear-gradient(135deg,var(--green),var(--green2)); color:#04120a; font-size:15px; cursor:pointer; display:grid;place-items:center; transition:.15s}
+  .wainput button:hover{transform:scale(1.06)} .wainput button:disabled{opacity:.45; cursor:default; transform:none}
   .float{position:absolute; z-index:3; border-radius:14px; padding:11px 13px; font-size:12.5px; font-weight:700;
-    background:linear-gradient(160deg,var(--card2),var(--card)); border:1px solid var(--line); box-shadow:0 18px 44px rgba(0,0,0,.5); opacity:0}
+    background:linear-gradient(160deg,var(--card2),var(--card)); border:1px solid var(--line); box-shadow:0 18px 44px rgba(0,0,0,.5); opacity:0; pointer-events:none}
   .float.show{animation:pop .5s forwards}
   @keyframes pop{0%{opacity:0; transform:translateY(10px) scale(.9)}100%{opacity:1; transform:none}}
-  .float.hot{top:96px; right:-18px; color:var(--hot); border-color:rgba(255,93,93,.4)}
+  .float.hot{top:88px; right:-18px; color:var(--hot); border-color:rgba(255,93,93,.4)}
   .float.hot .bar{margin-top:6px; height:5px; border-radius:3px; background:#2a1620; overflow:hidden; width:120px}
   .float.hot .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#ff8a5d,var(--hot)); animation:fill 1.1s .1s forwards}
   @keyframes fill{to{width:88%}}
-  .float.book{bottom:78px; left:-26px; color:var(--emerald); border-color:rgba(52,211,153,.4)}
+  .float.book{bottom:96px; left:-26px; color:var(--emerald); border-color:rgba(52,211,153,.4)}
   .float small{display:block; color:var(--dim); font-weight:600; font-size:10.5px; margin-top:2px}
   section{position:relative; padding:64px 0}
   .kicker{font-size:12.5px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--emerald); text-align:center}
@@ -152,7 +158,7 @@ const TEMPLATE: &str = r##"<!doctype html>
   footer{border-top:1px solid var(--line); padding:30px 0; color:var(--dim); font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px}
   footer b{color:var(--muted)}
   @media(max-width:860px){
-    .hero{grid-template-columns:1fr; padding-top:44px} .stage{margin-top:14px}
+    .hero{grid-template-columns:1fr; padding-top:44px} .stage{margin-top:26px}
     .navlinks{display:none}
     .steps,.caps{grid-template-columns:repeat(2,1fr)}
   }
@@ -182,9 +188,9 @@ const TEMPLATE: &str = r##"<!doctype html>
 
 <header class="wrap hero" id="demo">
   <div>
-    <span class="eyebrow"><span class="pdot"></span> <span data-es="En línea 24/7 · WhatsApp" data-en="Online 24/7 · WhatsApp">En línea 24/7 · WhatsApp</span></span>
+    <span class="eyebrow"><span class="pdot"></span> <span data-es="Agente en vivo · pruébalo ahora" data-en="Live agent · try it now">Agente en vivo · pruébalo ahora</span></span>
     <h1><span data-es="Convierte cada WhatsApp en una" data-en="Turn every WhatsApp into a">Convierte cada WhatsApp en una</span> <span class="g" data-es="cita agendada" data-en="booked meeting">cita agendada</span>.</h1>
-    <p class="lead" data-es="__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés — y entrega los leads calientes a tu equipo." data-en="__AGENT__ greets, qualifies and books your prospects automatically — 24/7, in Spanish and English — and hands hot leads to your team.">__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés — y entrega los leads calientes a tu equipo.</p>
+    <p class="lead" data-es="__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés. Escríbele aquí a la derecha: es el agente real, en vivo." data-en="__AGENT__ greets, qualifies and books your prospects automatically — 24/7, in Spanish and English. Chat with it on the right: it's the real agent, live.">__AGENT__ atiende, califica y agenda a tus prospectos automáticamente — 24/7, en español e inglés. Escríbele aquí a la derecha: es el agente real, en vivo.</p>
     <div class="cta">
       <a class="btn wa" href="https://wa.me/523223500097?text=Hola,%20quiero%20ver%20el%20asistente%20en%20acci%C3%B3n" target="_blank" rel="noopener">
         <span>▶</span> <span data-es="Probarlo en WhatsApp" data-en="Try it on WhatsApp">Probarlo en WhatsApp</span>
@@ -196,10 +202,11 @@ const TEMPLATE: &str = r##"<!doctype html>
     <div class="trust">
       <span><span class="tick">✓</span> <b>24/7</b> <span data-es="sin descanso" data-en="always on">sin descanso</span></span>
       <span><span class="tick">✓</span> <b>ES / EN</b></span>
-      <span><span class="tick">✓</span> <span data-es="Agenda + CRM automáticos" data-en="Auto calendar + CRM">Agenda + CRM automáticos</span></span>
+      <span><span class="tick">✓</span> <span data-es="Agenda + CRM reales" data-en="Real calendar + CRM">Agenda + CRM reales</span></span>
     </div>
   </div>
   <div class="stage">
+    <span class="livetag"><span class="pdot"></span> <span data-es="EN VIVO" data-en="LIVE">EN VIVO</span></span>
     <div class="phone">
       <div class="screen">
         <div class="wahead">
@@ -210,10 +217,14 @@ const TEMPLATE: &str = r##"<!doctype html>
           </div>
         </div>
         <div class="chat" id="chat"></div>
+        <div class="wainput">
+          <input id="cin" type="text" autocomplete="off" placeholder="Escribe tu mensaje…" data-esph="Escribe tu mensaje…" data-enph="Type your message…">
+          <button id="csend" type="button" aria-label="Send">➤</button>
+        </div>
       </div>
     </div>
-    <div class="float hot" id="fhot">🔥 <span data-es="Lead CALIENTE" data-en="HOT lead">Lead CALIENTE</span><div class="bar"><i></i></div><small data-es="Puntaje 0.88 · listo para agendar" data-en="Score 0.88 · ready to book">Puntaje 0.88 · listo para agendar</small></div>
-    <div class="float book" id="fbook">✓ <span data-es="Cita agendada" data-en="Meeting booked">Cita agendada</span><small data-es="Mar 10:00 · Google Calendar" data-en="Tue 10:00 · Google Calendar">Mar 10:00 · Google Calendar</small></div>
+    <div class="float hot" id="fhot">🔥 <span data-es="Lead CALIENTE" data-en="HOT lead">Lead CALIENTE</span><div class="bar"><i></i></div><small data-es="Listo para agendar" data-en="Ready to book">Listo para agendar</small></div>
+    <div class="float book" id="fbook">✓ <span data-es="Cita agendada" data-en="Meeting booked">Cita agendada</span><small data-es="Google Calendar" data-en="Google Calendar">Google Calendar</small></div>
   </div>
 </header>
 
@@ -251,8 +262,8 @@ const TEMPLATE: &str = r##"<!doctype html>
   <div class="wrap">
     <div class="ctaband">
       <div class="kicker" data-es="Demo" data-en="Demo">Demo</div>
-      <h2 data-es="Míralo trabajar con tus propios leads" data-en="Watch it work with your own leads">Míralo trabajar con tus propios leads</h2>
-      <p class="sectlead" data-es="Escríbenos por WhatsApp y deja que __AGENT__ te atienda como atendería a tu cliente." data-en="Message us on WhatsApp and let __AGENT__ handle you the way it would handle your customer.">Escríbenos por WhatsApp y deja que __AGENT__ te atienda como atendería a tu cliente.</p>
+      <h2 data-es="Ya lo probaste arriba — ahora llévalo a tu negocio" data-en="You just tried it above — now bring it to your business">Ya lo probaste arriba — ahora llévalo a tu negocio</h2>
+      <p class="sectlead" data-es="El chat de arriba es el agente real trabajando en vivo. Hablemos de conectarlo a tu WhatsApp, tu calendario y tu CRM." data-en="The chat above is the real agent working live. Let's talk about wiring it to your WhatsApp, calendar and CRM.">El chat de arriba es el agente real trabajando en vivo. Hablemos de conectarlo a tu WhatsApp, tu calendario y tu CRM.</p>
       <div class="cta">
         <a class="btn wa" href="https://wa.me/523223500097?text=Hola,%20quiero%20la%20demo%20de%20__AGENT__" target="_blank" rel="noopener"><span>▶</span> <span data-es="Escribir por WhatsApp" data-en="Message on WhatsApp">Escribir por WhatsApp</span></a>
         <a class="btn ghost" href="mailto:marcus@creandotumatrix.com?subject=Demo%20__AGENT__">marcus@creandotumatrix.com</a>
@@ -292,73 +303,61 @@ const TEMPLATE: &str = r##"<!doctype html>
   document.querySelectorAll('.reveal').forEach(function(el,i){ el.style.transitionDelay=(i%4*80)+'ms'; io.observe(el); });
 })();
 
+/* LIVE chat: talks to the real agent via POST /api/chat (no WhatsApp). */
 (function(){
-  var KEY='lg_lang', gen=0;
-  var script={
-    es:[
-      {s:'in', t:'Hola, vi su anuncio 👋'},
-      {s:'out', t:'¡Hola! Soy __AGENT__ de __BUSINESS__ 😊 ¿En qué área necesitas apoyo?'},
-      {s:'in', t:'Quiero automatizar la atención por WhatsApp'},
-      {s:'out', t:'¡Excelente! ¿Cuántas sucursales manejan y para cuándo lo necesitas?'},
-      {s:'in', t:'5 sucursales, para este mes 🙌'},
-      {s:'hot'},
-      {s:'out', t:'Perfecto. Tengo estos horarios disponibles:'},
-      {s:'slots', o:['Mar 10:00','Mar 12:30','Mié 09:00']},
-      {s:'in', t:'El martes a las 10:00 👍'},
-      {s:'out', t:'✅ ¡Listo! Tu cita quedó agendada. Te llega confirmación por aquí y a tu correo.'},
-      {s:'book'}
-    ],
-    en:[
-      {s:'in', t:'Hi, I saw your ad 👋'},
-      {s:'out', t:'Hi! I’m __AGENT__ from __BUSINESS__ 😊 What do you need help with?'},
-      {s:'in', t:'I want to automate customer service on WhatsApp'},
-      {s:'out', t:'Great! How many locations do you run, and by when do you need it?'},
-      {s:'in', t:'5 locations, this month 🙌'},
-      {s:'hot'},
-      {s:'out', t:'Perfect. Here are some open times:'},
-      {s:'slots', o:['Tue 10:00','Tue 12:30','Wed 09:00']},
-      {s:'in', t:'Tuesday at 10:00 👍'},
-      {s:'out', t:'✅ Done! Your meeting is booked. You’ll get a confirmation here and by email.'},
-      {s:'book'}
-    ]
-  };
-  var chat=document.getElementById('chat'), fhot=document.getElementById('fhot'), fbook=document.getElementById('fbook');
+  var chat=document.getElementById('chat');
+  var input=document.getElementById('cin');
+  var sendBtn=document.getElementById('csend');
+  var fhot=document.getElementById('fhot'), fbook=document.getElementById('fbook');
+  var sid='web-'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+  var busy=false;
   function now(){ var d=new Date(); return (d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0'); }
-  function sleep(ms,g){ return new Promise(function(r){ setTimeout(function(){ if(g===gen) r(); },ms); }); }
-  function bubble(m){
-    var b=document.createElement('div'); b.className='bub '+(m.s==='out'?'out':'in');
-    b.innerHTML=m.t.replace(/</g,'&lt;')+'<span class="tm">'+now()+(m.s==='out'?' ✓✓':'')+'</span>';
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function bubble(text,out){
+    var b=document.createElement('div'); b.className='bub '+(out?'out':'in');
+    b.innerHTML=esc(text)+'<span class="tm">'+now()+(out?' ✓✓':'')+'</span>';
     chat.appendChild(b); chat.scrollTop=chat.scrollHeight;
   }
-  function typing(){ var t=document.createElement('div'); t.className='typing'; t.innerHTML='<i></i><i></i><i></i>'; chat.appendChild(t); chat.scrollTop=chat.scrollHeight; return t; }
-  function slots(o){
-    var w=document.createElement('div'); w.className='slots';
-    o.forEach(function(s,i){ var e=document.createElement('span'); e.className='slot'+(i===0?' pick':''); e.textContent=s; w.appendChild(e); });
-    chat.appendChild(w); chat.scrollTop=chat.scrollHeight;
+  function showTyping(){ var t=document.createElement('div'); t.className='typing'; t.id='typing'; t.innerHTML='<i></i><i></i><i></i>'; chat.appendChild(t); chat.scrollTop=chat.scrollHeight; }
+  function hideTyping(){ var t=document.getElementById('typing'); if(t) t.remove(); }
+  function cards(score,status){
+    if(score==='hot' || score==='warm') fhot.classList.add('show');
+    if(status==='booked') fbook.classList.add('show');
   }
-  async function play(lang){
-    var g=++gen; chat.innerHTML=''; fhot.classList.remove('show'); fbook.classList.remove('show');
-    await sleep(400,g);
-    var seq=script[lang];
-    for(var i=0;i<seq.length;i++){
-      var m=seq[i];
-      if(m.s==='hot'){ fhot.classList.add('show'); await sleep(1100,g); continue; }
-      if(m.s==='book'){ fbook.classList.add('show'); await sleep(2600,g); continue; }
-      if(m.s==='slots'){ slots(m.o); await sleep(1100,g); continue; }
-      if(m.s==='out'){ var tp=typing(); await sleep(950,g); if(g!==gen)return; chat.removeChild(tp); }
-      bubble(m); await sleep(m.s==='out'?1150:850,g);
-      if(g!==gen) return;
+  async function send(text,showUser){
+    if(busy) return; busy=true; sendBtn.disabled=true;
+    if(showUser) bubble(text,true);
+    showTyping();
+    try{
+      var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sid,text:text})});
+      var d=await r.json();
+      hideTyping();
+      if(d.reply) bubble(d.reply,false);
+      cards(d.score,d.status);
+    }catch(e){
+      hideTyping(); bubble('Se perdió la conexión. Intenta de nuevo. 🙏',false);
     }
-    await sleep(2600,g); if(g===gen) play(lang);
+    busy=false; sendBtn.disabled=false; input.focus();
   }
+  function submit(){ var t=input.value.trim(); if(!t||busy) return; input.value=''; send(t,true); }
+  sendBtn.addEventListener('click',submit);
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
+  var openLang=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';
+  send(openLang==='en'?'Hi':'Hola', true);
+})();
+
+/* Language toggle: swaps static UI copy (chat content is whatever the agent says). */
+(function(){
+  var KEY='lg_lang';
   var els=document.querySelectorAll('[data-es]');
+  var input=document.getElementById('cin');
   function apply(l){
     if(l!=='en') l='es';
     document.documentElement.lang=l;
     els.forEach(function(el){ var v=el.getAttribute('data-'+l); if(v!==null) el.textContent=v; });
+    if(input){ var ph=input.getAttribute('data-'+l+'ph'); if(ph) input.placeholder=ph; }
     document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-lang')===l); });
     try{ localStorage.setItem(KEY,l); }catch(e){}
-    play(l);
   }
   document.querySelectorAll('.lang-btn').forEach(function(b){ b.addEventListener('click', function(e){ apply(e.currentTarget.getAttribute('data-lang')); }); });
   var saved=null; try{ saved=localStorage.getItem(KEY); }catch(e){}
