@@ -267,6 +267,7 @@ const TEMPLATE: &str = r##"<!doctype html>
       <span class="chip"><span class="cd" style="background:var(--green)"></span> WhatsApp</span>
       <span class="chip"><span class="cd" style="background:var(--accent)"></span> Google Calendar</span>
       <span class="chip"><span class="cd" style="background:#ff7a59"></span> HubSpot CRM</span>
+      <span class="chip"><span class="cd" style="background:#5b9bd5"></span> Postgres Database</span>
     </div>
   </div>
 </section>
