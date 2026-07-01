@@ -182,7 +182,7 @@ const TEMPLATE: &str = r##"<!doctype html>
       <button type="button" class="lang-btn" data-lang="es">ES</button>
       <button type="button" class="lang-btn" data-lang="en">EN</button>
     </span>
-    <a class="btn wa sm" href="https://wa.me/523223500097?text=Hola,%20quiero%20agendar%20una%20llamada" target="_blank" rel="noopener">
+    <a class="btn wa sm" href="https://creandotumatrix.com/#servicios" target="_blank" rel="noopener">
       <span data-es="Agendar llamada" data-en="Book a Call">Agendar llamada</span>
     </a>
   </div>
