@@ -91,6 +91,11 @@ const TEMPLATE: &str = r##"<!doctype html>
   .trust span{display:inline-flex; align-items:center; gap:7px}
   .trust b{color:var(--txt); font-weight:700}
   .tick{color:var(--emerald)}
+  .examples{margin:24px auto 0; max-width:680px}
+  .exlabel{display:block; color:var(--dim); font-size:12.5px; font-weight:600; margin-bottom:10px; letter-spacing:.2px}
+  .exrow{display:flex; gap:9px; flex-wrap:wrap; justify-content:center}
+  .exchip{background:rgba(255,255,255,.03); border:1px solid var(--line); color:var(--muted); font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:999px; cursor:pointer; transition:.18s; font-family:inherit; max-width:100%}
+  .exchip:hover{border-color:var(--emerald); color:var(--txt); background:rgba(37,211,102,.08); transform:translateY(-1px)}
   .stage{position:relative; display:flex; justify-content:center}
   .livetag{position:absolute; top:-14px; left:50%; transform:translateX(-50%); z-index:4; font-size:11px; font-weight:800; letter-spacing:.4px;
     color:#04120a; background:linear-gradient(135deg,var(--green),var(--emerald)); padding:5px 12px; border-radius:999px; box-shadow:var(--glow); display:inline-flex; align-items:center; gap:6px}
@@ -220,6 +225,15 @@ const TEMPLATE: &str = r##"<!doctype html>
     <div class="float hot" id="fhot">🔥 <span data-es="Lead CALIENTE" data-en="HOT lead">Lead CALIENTE</span><div class="bar"><i></i></div><small data-es="Listo para agendar" data-en="Ready to book">Listo para agendar</small></div>
     <div class="float book" id="fbook">✓ <span data-es="Cita agendada" data-en="Meeting booked">Cita agendada</span><small data-es="Google Calendar" data-en="Google Calendar">Google Calendar</small></div>
   </div>
+  <div class="examples">
+    <span class="exlabel" data-es="Pruébalo — escribe o toca un ejemplo:" data-en="Try it — type or tap an example:">Pruébalo — escribe o toca un ejemplo:</span>
+    <div class="exrow">
+      <button type="button" class="exchip" data-es="Tengo una clínica dental y quiero agendar más citas" data-en="I run a dental clinic and want to book more appointments">Tengo una clínica dental y quiero agendar más citas</button>
+      <button type="button" class="exchip" data-es="Quiero automatizar la atención de mi restaurante por WhatsApp" data-en="I want to automate my restaurant's WhatsApp support">Quiero automatizar la atención de mi restaurante por WhatsApp</button>
+      <button type="button" class="exchip" data-es="Somos una agencia y necesitamos calificar leads" data-en="We're an agency and need to qualify leads">Somos una agencia y necesitamos calificar leads</button>
+      <button type="button" class="exchip" data-es="¿Cómo funciona y qué integra?" data-en="How does it work and what does it integrate?">¿Cómo funciona y qué integra?</button>
+    </div>
+  </div>
 </header>
 
 <section id="como">
@@ -264,10 +278,10 @@ const TEMPLATE: &str = r##"<!doctype html>
       <div class="cap reveal"><div class="v">∞</div><div class="k" data-es="Chats a la vez" data-en="Chats at once">Chats a la vez</div></div>
     </div>
     <div class="integ" style="margin-top:30px">
-      <span class="chip"><span class="cd" style="background:var(--green)"></span> WhatsApp</span>
-      <span class="chip"><span class="cd" style="background:var(--accent)"></span> Google Calendar</span>
-      <span class="chip"><span class="cd" style="background:#ff7a59"></span> HubSpot CRM</span>
-      <span class="chip"><span class="cd" style="background:#5b9bd5"></span> Postgres Database</span>
+      <a class="chip" href="https://wa.me/523223500097" target="_blank" rel="noopener"><span class="cd" style="background:var(--green)"></span> WhatsApp</a>
+      <a class="chip" href="https://calendar.google.com" target="_blank" rel="noopener"><span class="cd" style="background:var(--accent)"></span> Google Calendar</a>
+      <a class="chip" href="https://www.hubspot.com" target="_blank" rel="noopener"><span class="cd" style="background:#ff7a59"></span> HubSpot CRM</a>
+      <a class="chip" href="https://www.postgresql.org" target="_blank" rel="noopener"><span class="cd" style="background:#5b9bd5"></span> Postgres Database</a>
     </div>
   </div>
 </section>
@@ -356,6 +370,15 @@ const TEMPLATE: &str = r##"<!doctype html>
   function submit(){ var t=input.value.trim(); if(!t||busy) return; input.value=''; send(t,true); }
   sendBtn.addEventListener('click',submit);
   input.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
+  document.querySelectorAll('.exchip').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(busy) return;
+      var t=b.textContent.trim();
+      var st=document.querySelector('.stage');
+      if(st) st.scrollIntoView({behavior:'smooth',block:'center'});
+      send(t,true);
+    });
+  });
   var openLang=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';
   send(openLang==='en'?'Hi':'Hola', true);
 })();
