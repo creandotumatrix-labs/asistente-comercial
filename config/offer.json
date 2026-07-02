@@ -1,13 +1,13 @@
 {
   "branding": {
     "business_name": "CreandoTuMatrixDemos",
-    "agent_name": "LeadGenAgent",
-    "locale": "es-MX",
+    "agent_name": "Vera", 
+        "locale": "es-MX",
     "tone": "cálido, profesional, directo"
   },
   "offer": {
-    "summary": "Implementamos asistentes de WhatsApp que atienden, califican y agendan clientes 24/7 para negocios de servicios.",
-    "what_we_sell": "Consultoría e implementación de automatización de atención y ventas por WhatsApp (no vendemos licencias sueltas; es solución llave en mano).",
+    "summary": "Implementamos un asistente de WhatsApp que atiende, califica y agenda pacientes 24/7 — ideal para clínicas dentales con una o varias sucursales.",
+    "what_we_sell": "Consultoría e implementación de un asistente de WhatsApp para clínicas dentales (no vendemos licencias sueltas; es solución llave en mano).",
     "pricing_policy": "No cotices precios ni alcances específicos; el asesor define la propuesta según el caso en la llamada.",
     "faq": [
       { "q": "¿En cuánto tiempo queda funcionando?", "a": "Un piloto suele estar operando en 1 a 2 semanas; el asesor confirma según tu caso." },
