@@ -398,7 +398,7 @@ const TEMPLATE: &str = r##"<!doctype html>
   }
   document.querySelectorAll('.lang-btn').forEach(function(b){ b.addEventListener('click', function(e){ apply(e.currentTarget.getAttribute('data-lang')); }); });
   var saved=null; try{ saved=localStorage.getItem(KEY); }catch(e){}
-  var def=(navigator.language||'es').toLowerCase().indexOf('en')===0?'en':'es';
+  var def='es'; // Spanish-first, matching the other demos
   apply(saved||def);
 })();
 </script>
