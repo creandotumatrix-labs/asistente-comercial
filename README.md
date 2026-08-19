@@ -11,6 +11,16 @@ Built in Rust (axum + tokio). Real integrations: **WhatsApp Cloud API**,
 
 ---
 
+## Demo
+
+![Demo en vivo — Asistente Comercial](asistente-comercial-demo.gif)
+
+- 🔴 **Demo en vivo:** [asistente-comercial-production.up.railway.app](https://asistente-comercial-production.up.railway.app/)
+- 📄 **Detalles:** [asistente-comercial-demo.vercel.app](https://asistente-comercial-demo.vercel.app/)
+- ▶️ **Video:** [youtu.be/Idg40dF3FZE](https://youtu.be/Idg40dF3FZE)
+
+---
+
 ## Why the scoring is deterministic (the defensible part)
 
 The LLM **extracts** structured slot values from the chat. It does **not** invent
@@ -228,4 +238,3 @@ match. Per-contact processing is serialized by an in-process keyed lock
   lead enrichment are deliberately out of MVP scope.
 - `ConvLocks` is in-process; a multi-replica deployment needs a shared lock
   (e.g. Postgres advisory locks) — a drop-in swap behind the same interface.
-```
