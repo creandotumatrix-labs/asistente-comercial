@@ -46,7 +46,12 @@ impl LlmClient {
         }
     }
 
-    pub async fn create(&self, system: &str, messages: &[Value], tools: &[Value]) -> Result<LlmResponse> {
+    pub async fn create(
+        &self,
+        system: &str,
+        messages: &[Value],
+        tools: &[Value],
+    ) -> Result<LlmResponse> {
         let body = json!({
             "model": self.model,
             "max_tokens": self.max_tokens,

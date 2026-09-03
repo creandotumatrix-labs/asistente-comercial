@@ -38,7 +38,10 @@ fn render(conv: &Conversation) -> String {
                 Some("tool_use") => {
                     let n = block.get("name").and_then(|x| x.as_str()).unwrap_or("");
                     let input = block.get("input").map(Value::to_string).unwrap_or_default();
-                    rows.push_str(&bubble("tool", &format!("🔧 <b>{}</b>({})", esc(n), esc(&input))));
+                    rows.push_str(&bubble(
+                        "tool",
+                        &format!("🔧 <b>{}</b>({})", esc(n), esc(&input)),
+                    ));
                 }
                 Some("tool_result") => {
                     let c = block

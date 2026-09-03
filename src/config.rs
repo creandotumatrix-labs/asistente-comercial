@@ -71,7 +71,11 @@ impl AppConfig {
         let crm_backend = match env_or("CRM_BACKEND", "hubspot").to_lowercase().as_str() {
             "hubspot" => CrmBackend::HubSpot,
             "webhook" => CrmBackend::Webhook,
-            other => return Err(anyhow!("unknown CRM_BACKEND `{other}` (use hubspot|webhook)")),
+            other => {
+                return Err(anyhow!(
+                    "unknown CRM_BACKEND `{other}` (use hubspot|webhook)"
+                ))
+            }
         };
 
         let google_service_account_json = match env_opt("GOOGLE_SERVICE_ACCOUNT_JSON") {
@@ -105,7 +109,9 @@ impl AppConfig {
                 api_key: env_req("ANTHROPIC_API_KEY")?,
                 model: env_or("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
                 version: env_or("ANTHROPIC_VERSION", "2023-06-01"),
-                max_tokens: env_or("ANTHROPIC_MAX_TOKENS", "1024").parse().unwrap_or(1024),
+                max_tokens: env_or("ANTHROPIC_MAX_TOKENS", "1024")
+                    .parse()
+                    .unwrap_or(1024),
             },
             whatsapp: WhatsappConfig {
                 phone_number_id: env_req("WHATSAPP_PHONE_NUMBER_ID")?,

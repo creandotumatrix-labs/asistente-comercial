@@ -81,10 +81,7 @@ impl InboundPayload {
         for entry in &self.entry {
             for change in &entry.changes {
                 let value = &change.value;
-                let profile_name = value
-                    .contacts
-                    .first()
-                    .and_then(|c| c.profile.name.clone());
+                let profile_name = value.contacts.first().and_then(|c| c.profile.name.clone());
                 for m in &value.messages {
                     let text = match (m.kind.as_str(), &m.text) {
                         ("text", Some(t)) => t.body.clone(),

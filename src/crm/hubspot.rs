@@ -61,7 +61,9 @@ impl HubSpotCrm {
         }
         props.insert("hs_lead_status".into(), json!(lead_status(&input.score)));
 
-        let (status, body) = self.post(CONTACTS_URL, &json!({ "properties": props })).await?;
+        let (status, body) = self
+            .post(CONTACTS_URL, &json!({ "properties": props }))
+            .await?;
         if status.is_success() {
             return Ok(body.get("id").and_then(|x| x.as_str()).map(str::to_string));
         }
@@ -74,7 +76,11 @@ impl HubSpotCrm {
         Err(anyhow!("hubspot contact upsert failed ({status}): {body}"))
     }
 
-    async fn create_deal(&self, input: &LeadInput, contact_id: Option<&str>) -> Result<Option<String>> {
+    async fn create_deal(
+        &self,
+        input: &LeadInput,
+        contact_id: Option<&str>,
+    ) -> Result<Option<String>> {
         let mut props = Map::new();
         props.insert("dealname".into(), json!(deal_name(input)));
         props.insert("pipeline".into(), json!(self.pipeline));
@@ -145,7 +151,10 @@ fn split_name(name: Option<&str>) -> (Option<String>, Option<String>) {
             let n = n.trim();
             let mut parts = n.splitn(2, ' ');
             let first = parts.next().map(str::to_string);
-            let last = parts.next().map(|s| s.trim().to_string()).filter(|s| !s.is_empty());
+            let last = parts
+                .next()
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty());
             (first, last)
         }
         _ => (None, None),

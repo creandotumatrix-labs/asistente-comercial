@@ -178,7 +178,11 @@ fn factor_score(factor: &str, obj: &Map<String, Value>, r: &Rubric) -> (f64, Str
             let raw_val = field_str(obj, "timeline");
             let key = raw_val.trim().to_lowercase();
             let s = lookup_timeline(&key, r).unwrap_or(r.default_factor_score);
-            let shown = if raw_val.is_empty() { "sin dato" } else { &raw_val };
+            let shown = if raw_val.is_empty() {
+                "sin dato"
+            } else {
+                &raw_val
+            };
             (s, format!("Plazo: «{shown}»"))
         }
         "size" => match field_num(obj, "size") {

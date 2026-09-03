@@ -52,7 +52,14 @@ pub async fn chat(State(state): State<AppState>, Json(req): Json<ChatReq>) -> Js
     let from = format!("web-{sid}");
     let message_id = format!("{from}:{}", Uuid::new_v4());
 
-    match agent::process_message(&state, &from, Some("Demo web".to_string()), text, &message_id).await
+    match agent::process_message(
+        &state,
+        &from,
+        Some("Demo web".to_string()),
+        text,
+        &message_id,
+    )
+    .await
     {
         Ok(Some(r)) => Json(ChatResp {
             reply: r.reply,

@@ -135,7 +135,12 @@ pub fn tool_definitions(offer: &Offer) -> Vec<Value> {
 }
 
 /// Execute a tool call. Always returns a JSON string for the tool_result block.
-pub async fn dispatch(state: &AppState, ctx: &mut ToolContext, name: &str, input: &Value) -> String {
+pub async fn dispatch(
+    state: &AppState,
+    ctx: &mut ToolContext,
+    name: &str,
+    input: &Value,
+) -> String {
     match name {
         "score_lead" => {
             let out = scoring::score(&state.offer, input);
@@ -165,7 +170,10 @@ pub async fn dispatch(state: &AppState, ctx: &mut ToolContext, name: &str, input
         },
 
         "book_meeting" => {
-            let slot_str = input.get("slot").and_then(|x| x.as_str()).unwrap_or_default();
+            let slot_str = input
+                .get("slot")
+                .and_then(|x| x.as_str())
+                .unwrap_or_default();
             let start = match DateTime::parse_from_rfc3339(slot_str) {
                 Ok(d) => d.with_timezone(&Utc),
                 Err(_) => {
@@ -180,7 +188,10 @@ pub async fn dispatch(state: &AppState, ctx: &mut ToolContext, name: &str, input
                 .and_then(|x| x.as_str())
                 .map(str::to_string)
                 .or_else(|| ctx.profile_name.clone());
-            let email = input.get("email").and_then(|x| x.as_str()).map(str::to_string);
+            let email = input
+                .get("email")
+                .and_then(|x| x.as_str())
+                .map(str::to_string);
 
             let req = BookRequest {
                 start,
@@ -194,7 +205,11 @@ pub async fn dispatch(state: &AppState, ctx: &mut ToolContext, name: &str, input
                 attendee_email: email.clone(),
             };
 
-            match state.calendar.book_meeting(&state.offer.calendar, req).await {
+            match state
+                .calendar
+                .book_meeting(&state.offer.calendar, req)
+                .await
+            {
                 Ok(b) => {
                     if let Err(e) = state
                         .store
@@ -239,8 +254,14 @@ pub async fn dispatch(state: &AppState, ctx: &mut ToolContext, name: &str, input
                 .or_else(|| ctx.last_name.clone())
                 .or_else(|| ctx.profile_name.clone());
 
-            let mut email = input.get("email").and_then(|x| x.as_str()).map(str::to_string);
-            let mut phone = input.get("phone").and_then(|x| x.as_str()).map(str::to_string);
+            let mut email = input
+                .get("email")
+                .and_then(|x| x.as_str())
+                .map(str::to_string);
+            let mut phone = input
+                .get("phone")
+                .and_then(|x| x.as_str())
+                .map(str::to_string);
             if let Some(contact) = input.get("contact").and_then(|x| x.as_str()) {
                 if contact.contains('@') {
                     email.get_or_insert_with(|| contact.to_string());
@@ -352,7 +373,10 @@ pub async fn dispatch(state: &AppState, ctx: &mut ToolContext, name: &str, input
         }
 
         "send_resource" => {
-            let topic = input.get("topic").and_then(|x| x.as_str()).unwrap_or("default");
+            let topic = input
+                .get("topic")
+                .and_then(|x| x.as_str())
+                .unwrap_or("default");
             let link = state
                 .offer
                 .resources

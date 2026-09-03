@@ -10,7 +10,11 @@ pub fn system_prompt(offer: &Offer) -> String {
 
     let mut slots_block = String::new();
     for s in &offer.qualification.slots {
-        let req = if s.required { "obligatorio" } else { "opcional" };
+        let req = if s.required {
+            "obligatorio"
+        } else {
+            "opcional"
+        };
         let kind = match s.kind {
             SlotKind::Number => "número",
             SlotKind::Enum => "opción",

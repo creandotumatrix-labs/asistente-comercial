@@ -28,9 +28,10 @@ use crate::whatsapp::WhatsappClient;
 async fn main() -> Result<()> {
     let _ = dotenvy::dotenv();
     tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| {
-            EnvFilter::new("asistente_comercial=info,tower_http=warn")
-        }))
+        .with_env_filter(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| EnvFilter::new("asistente_comercial=info,tower_http=warn")),
+        )
         .init();
 
     let config = AppConfig::from_env().context("loading configuration")?;

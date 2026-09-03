@@ -148,8 +148,14 @@ pub async fn process_message(
 /// WhatsApp Cloud API.
 pub async fn handle_inbound(state: AppState, msg: InboundText) -> Result<()> {
     let from = msg.from.clone();
-    if let Some(res) =
-        process_message(&state, &from, msg.profile_name.clone(), msg.text, &msg.message_id).await?
+    if let Some(res) = process_message(
+        &state,
+        &from,
+        msg.profile_name.clone(),
+        msg.text,
+        &msg.message_id,
+    )
+    .await?
     {
         if let Err(e) = state.whatsapp.send_text(&from, &res.reply).await {
             tracing::error!("whatsapp send failed (turn persisted): {e}");

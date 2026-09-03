@@ -99,14 +99,14 @@ pub fn candidate_slots(cfg: &CalendarCfg, now: DateTime<Utc>) -> Result<Vec<Slot
 }
 
 /// Keep only slots that don't overlap any busy interval; cap at `max_slots`.
-pub fn subtract_busy(slots: Vec<Slot>, busy: &[(DateTime<Utc>, DateTime<Utc>)], max: usize) -> Vec<Slot> {
+pub fn subtract_busy(
+    slots: Vec<Slot>,
+    busy: &[(DateTime<Utc>, DateTime<Utc>)],
+    max: usize,
+) -> Vec<Slot> {
     slots
         .into_iter()
-        .filter(|s| {
-            !busy
-                .iter()
-                .any(|(bs, be)| s.start < *be && *bs < s.end)
-        })
+        .filter(|s| !busy.iter().any(|(bs, be)| s.start < *be && *bs < s.end))
         .take(max)
         .collect()
 }

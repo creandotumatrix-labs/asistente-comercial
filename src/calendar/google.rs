@@ -14,7 +14,9 @@ use serde_json::{json, Value};
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
-use super::{candidate_slots, label_for, subtract_busy, BookRequest, BookedMeeting, Calendar, Slot};
+use super::{
+    candidate_slots, label_for, subtract_busy, BookRequest, BookedMeeting, Calendar, Slot,
+};
 use crate::config::CalendarCfg;
 
 const SCOPE: &str = "https://www.googleapis.com/auth/calendar";
@@ -114,7 +116,10 @@ impl GoogleCalendar {
             .and_then(|x| x.as_str())
             .ok_or_else(|| anyhow!("no access_token in google response: {body}"))?
             .to_string();
-        let expires_in = body.get("expires_in").and_then(|x| x.as_i64()).unwrap_or(3600);
+        let expires_in = body
+            .get("expires_in")
+            .and_then(|x| x.as_i64())
+            .unwrap_or(3600);
 
         let mut guard = self.token.lock().await;
         *guard = Some(Cached {
@@ -130,7 +135,13 @@ impl GoogleCalendar {
         url: &str,
         body: &Value,
     ) -> Result<(reqwest::StatusCode, Value)> {
-        let resp = self.http.post(url).bearer_auth(token).json(body).send().await?;
+        let resp = self
+            .http
+            .post(url)
+            .bearer_auth(token)
+            .json(body)
+            .send()
+            .await?;
         let status = resp.status();
         let v: Value = resp.json().await.unwrap_or(Value::Null);
         Ok((status, v))
@@ -142,8 +153,15 @@ impl GoogleCalendar {
         end: DateTime<Utc>,
         v: &Value,
     ) -> BookedMeeting {
-        let event_id = v.get("id").and_then(|x| x.as_str()).unwrap_or_default().to_string();
-        let html_link = v.get("htmlLink").and_then(|x| x.as_str()).map(str::to_string);
+        let event_id = v
+            .get("id")
+            .and_then(|x| x.as_str())
+            .unwrap_or_default()
+            .to_string();
+        let html_link = v
+            .get("htmlLink")
+            .and_then(|x| x.as_str())
+            .map(str::to_string);
         let meet_link = v
             .get("hangoutLink")
             .and_then(|x| x.as_str())
@@ -250,7 +268,9 @@ impl Calendar for GoogleCalendar {
         // prospect's contact goes in the body and they get the WhatsApp
         // confirmation instead of a Google invite email.
         if status.as_u16() == 403 {
-            tracing::warn!("calendar insert 403 (service account without DWD); retrying plain event: {v}");
+            tracing::warn!(
+                "calendar insert 403 (service account without DWD); retrying plain event: {v}"
+            );
             let plain = json!({
                 "summary": req.summary,
                 "description": with_contact(&req),
