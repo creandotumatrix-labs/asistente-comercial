@@ -24,7 +24,9 @@ pub struct Change {
 
 #[derive(Debug, Default, Deserialize)]
 pub struct ChangeValue {
+    // Not read; kept so the field is visible when the value is logged/debugged.
     #[serde(default)]
+    #[allow(dead_code)]
     pub messaging_product: Option<String>,
     #[serde(default)]
     pub contacts: Vec<Contact>,
@@ -35,7 +37,10 @@ pub struct ChangeValue {
 
 #[derive(Debug, Deserialize)]
 pub struct Contact {
+    // `InboundText.from` (the message envelope) carries the wa_id used
+    // downstream; this copy is unread but kept for parity with the payload.
     #[serde(default)]
+    #[allow(dead_code)]
     pub wa_id: String,
     #[serde(default)]
     pub profile: Profile,

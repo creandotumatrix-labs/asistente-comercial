@@ -33,6 +33,9 @@ impl Store {
         Ok(())
     }
 
+    /// Escape hatch for a caller that needs the raw pool (e.g. a future
+    /// admin/metrics endpoint); not called from anywhere yet.
+    #[allow(dead_code)]
     pub fn pool(&self) -> &PgPool {
         &self.pool
     }

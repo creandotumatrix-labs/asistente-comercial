@@ -27,6 +27,10 @@ pub struct ToolUse {
 
 #[derive(Debug, Clone)]
 pub struct LlmResponse {
+    // Not inspected by the caller yet (the tool-use loop only checks
+    // `tool_uses`/`text`); kept for future stop-reason-specific handling
+    // (e.g. `max_tokens`).
+    #[allow(dead_code)]
     pub stop_reason: String,
     /// `{ "role": "assistant", "content": [...] }` — append verbatim to history.
     pub assistant_message: Value,

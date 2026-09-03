@@ -167,9 +167,14 @@ pub struct Offer {
 pub struct Branding {
     pub business_name: String,
     pub agent_name: String,
+    // Not read by the agent yet (system_prompt hardcodes es-MX / a neutral
+    // tone); kept so `offer.json` can declare them without a deploy-time
+    // parse error while a caller wires them in.
     #[serde(default = "default_locale")]
+    #[allow(dead_code)]
     pub locale: String,
     #[serde(default)]
+    #[allow(dead_code)]
     pub tone: String,
 }
 
@@ -247,7 +252,10 @@ pub struct Rubric {
 pub struct SizeTier {
     pub min: f64,
     pub score: f64,
+    // Documentation-only in `offer.json` (e.g. "small"/"large"); not read by
+    // the scoring engine, which reports the raw size value instead.
     #[serde(default)]
+    #[allow(dead_code)]
     pub label: String,
 }
 

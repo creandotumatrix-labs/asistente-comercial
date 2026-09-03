@@ -27,6 +27,9 @@ pub struct TurnResult {
     pub reply: String,
     pub status: String,
     pub score: Option<String>,
+    // Not read by either caller yet (WhatsApp handoff / web JSON response);
+    // kept on the result for a future caller that needs to correlate it.
+    #[allow(dead_code)]
     pub conversation_id: Uuid,
 }
 
