@@ -98,7 +98,7 @@
 <text x="-350" y="48" fill="#e3b341" text-anchor="middle">gcal: slot ✓</text>
 <rect x="-220" y="26" width="180" height="36" rx="8" fill="none" stroke="#ff7a45" stroke-width="1.5"/>
 <text x="-130" y="48" fill="#ff7a45" text-anchor="middle">hubspot: sync</text>
-<line x1="-160" y1="44" x2="-60" y2="44" stroke="#25d366" stroke-width="2" stroke-dasharray="5 5"><animate attributeName="stroke-dashoffset" values="0;-20" dur="0.8s" repeatCount="indefinite"/></line>
+<line x1="-252" y1="44" x2="-228" y2="44" stroke="#25d366" stroke-width="2" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" values="0;-20" dur="0.8s" repeatCount="indefinite"/></line>
 <animate attributeName="opacity" calcMode="discrete" values="0.25;1" keyTimes="0;0.62" dur="6s" repeatCount="indefinite"/>
 </g>
 
