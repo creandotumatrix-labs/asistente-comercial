@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/banner.svg" alt="asistente-comercial — animated banner" width="100%"></p>
+
 # 📈 Asistente Comercial — Calificador y Agendador de Leads por WhatsApp
 
 Agente de WhatsApp agnóstico al vertical que captura un lead entrante, lo califica contra una rúbrica **configurable** (estilo BANT), lo **puntúa** determinísticamente, **agenda** a los buenos en un Google Calendar real, y los **enruta** al vendedor con un resumen puntuado. Los leads fríos o que no califican reciben una respuesta cortés + un recurso — no un espacio de calendario. Un binario se convierte en un negocio nuevo con solo cambiar `offer.json`.
