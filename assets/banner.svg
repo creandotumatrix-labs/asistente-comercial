@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-label="asistente-comercial — asistente-comercial">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-label="asistente-comercial: Agente WhatsApp que califica, puntúa y agenda leads (es-MX).">
 <title>asistente-comercial</title>
 <defs>
 <radialGradient id="aur1"><stop offset="0" stop-color="#10b981" stop-opacity="0.50"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/></radialGradient>
@@ -87,8 +87,8 @@
 <rect x="180" y="-66" width="260" height="52" rx="14" fill="#101711" stroke="#3a4250" stroke-width="1.5"/>
 <text x="310" y="-44" font-size="12" fill="#8b98a5" text-anchor="middle">score</text>
 <rect x="200" y="-34" width="220" height="10" rx="5" fill="#1a2420"/>
-<rect x="200" y="-34" width="220" height="10" rx="5" fill="#25d366">
-<animate attributeName="width" values="0;198" keyTimes="0;0.55" dur="6s" repeatCount="indefinite"/>
+<rect x="200" y="-34" width="198" height="10" rx="5" fill="#25d366">
+<animate attributeName="width" values="0;198;198" keyTimes="0;0.55;1" dur="6s" repeatCount="indefinite"/>
 </rect>
 <text x="310" y="8" font-size="13" fill="#7ee787" text-anchor="middle" opacity="0">90/100 — agenda propuesta ✓
 <animate attributeName="opacity" calcMode="discrete" values="0;0;1" keyTimes="0;0.55;0.62" dur="6s" repeatCount="indefinite"/></text>
