@@ -1,0 +1,10 @@
+# asistente-comercial
+
+> Agente WhatsApp que califica, puntúa y agenda leads (es-MX). Rust + Claude; Google Calendar y HubSpot reales.
+
+asistente-comercial is maintained by Creando Tu Matrix Labs (Agentes de IA para LATAM · en español).
+
+## Links
+
+- [Landing page](https://creandotumatrix-labs.github.io/asistente-comercial/): overview, features, FAQ
+- [Source code](https://github.com/creandotumatrix-labs/asistente-comercial): README, issues, releases
