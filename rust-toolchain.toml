@@ -1,3 +1,7 @@
 [toolchain]
-channel = "stable"
+# Pinned to the last verified-good toolchain: this crate compiles and all 6
+# scoring tests pass on 1.88. Floating on "stable" broke the build on rustc
+# 1.100 (sqlx 0.7.4 `!: Decode` trait-bound error). Bumping to a newer
+# toolchain requires upgrading sqlx to 0.8 — a separate decision.
+channel = "1.88.0"
 components = ["rustfmt", "clippy"]
