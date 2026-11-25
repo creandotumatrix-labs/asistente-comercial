@@ -1,20 +1,13 @@
 # ── Builder ──────────────────────────────────────────────────────────────────
-# Latest stable 1.x: needed because we don't commit a Cargo.lock, so Cargo
-# resolves deps to latest, some of which require edition 2024 (Rust >= 1.85).
-FROM rust:1-slim-bookworm AS builder
+# Match the Rust 1.88.0 pin in rust-toolchain.toml and CI.
+# Cargo.lock has been tracked since the CI toolchain fix.
+FROM rust:1.88.0-slim-bookworm AS builder
 WORKDIR /app
 
-# Pre-cache dependencies (only re-runs when Cargo manifests change).
-COPY Cargo.toml ./
-COPY Cargo.lock* ./
-RUN mkdir src && echo 'fn main() {}' > src/main.rs \
-    && cargo build --release \
-    && rm -rf src
-
-# Build the real binary.
+COPY Cargo.toml Cargo.lock ./
 COPY migrations ./migrations
 COPY src ./src
-RUN cargo build --release
+RUN cargo build --locked --release
 
 # ── Runtime ──────────────────────────────────────────────────────────────────
 FROM debian:bookworm-slim
